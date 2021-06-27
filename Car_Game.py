@@ -154,24 +154,24 @@ while running:
 
     if collided:
         rainbowText = goRainbow(rainbowText)
-        display.blit(font1.render("Welcome to Car Game",False,rainbowText),(50,80))
-        display.blit(font2.render("Score:"+str(score),False,(20,20,20)),(280,180))
+        display.blit(font1.render("Welcome to Car Game",False,rainbowText),(width*0.235,height*0.2))
+        display.blit(font2.render("Score:"+str(score),False,(20,20,20)),(width*0.39,height*0.35))
 
-        if button(display,mousePos,(65,150,240),(95,170,255),(6,140,225),200,300,75,180,4,font3,"Play",(20,20,20),253,313):
+        if button(display,mousePos,(65,150,240),(95,170,255),(6,140,225),width*0.35,height*0.5,75,180,4,font3,"Play",(20,20,20),width*0.39,height*0.52):
             collided = False
+            beingPressed = False
             score = 0
-            print("h")
 
-        if button(display,mousePos,(65,150,240),(95,170,255),(6,140,225),400,300,75,180,4,font3,"Quit",(20,20,20),450,313):
+        if button(display,mousePos,(65,150,240),(95,170,255),(6,140,225),width*0.52,height*0.5,75,180,4,font3,"Quit",(20,20,20),width*0.56,height*0.52):
             running = False
-            print("j")
+            beingPressed = False
 
     if not collided:
         ################################ top items ################################
 
         if button(display,mousePos,(65,150,240),(95,170,255),(6,140,225),15,15,40,90,2,font4,"Quit",(20,20,20),31,16):
             running = False
-            print("n")
+            beingPressed = False
 
         display.blit(font4.render("SCORE: "+str(score),False,(20,20,20)),(120,15))
 
@@ -224,7 +224,6 @@ while running:
             obstacles.remove(toDelete)
         
         display.blit(car,(car_x_pos,car_y_pos))
-        print("g")
 
     pygame.display.flip()
 
