@@ -63,6 +63,22 @@ def button(display,mousePos,colour1,colour2,colour3,x_posBut,y_posBut,height,wid
     display.blit(font.render(text,False,textColour),(x_posText,y_posText))
     return beingPressed
 
+def goRainbow(rainbowTextColour):
+    if rainbowTextColour[0] == 255 and rainbowTextColour[1] < 255 and rainbowTextColour[2] == 0:
+        newRainbowTextColour = (rainbowTextColour[0],rainbowTextColour[1]+1,rainbowTextColour[2])
+    elif 0 < rainbowTextColour[0] <= 255 and rainbowTextColour[1] == 255 and rainbowTextColour[2] == 0:
+        newRainbowTextColour = (rainbowTextColour[0]-1,rainbowTextColour[1],rainbowTextColour[2])
+    elif rainbowTextColour[0] == 0 and rainbowTextColour[1] == 255 and rainbowTextColour[2] < 255:
+        newRainbowTextColour = (rainbowTextColour[0],rainbowTextColour[1],rainbowTextColour[2]+1)
+    elif rainbowTextColour[0] == 0 and 0 < rainbowTextColour[1] <= 255 and rainbowTextColour[2] == 255:
+        newRainbowTextColour = (rainbowTextColour[0],rainbowTextColour[1]-1,rainbowTextColour[2])
+    elif rainbowTextColour[0] < 255 and rainbowTextColour[1] == 0 and rainbowTextColour[2] == 255:
+        newRainbowTextColour = (rainbowTextColour[0]+1,rainbowTextColour[1],rainbowTextColour[2])
+    elif rainbowTextColour[0] == 255 and rainbowTextColour[1] == 0 and 0 < rainbowTextColour[2] <= 255:
+        newRainbowTextColour = (rainbowTextColour[0],rainbowTextColour[1],rainbowTextColour[2]-1)
+
+    return newRainbowTextColour
+
 pygame.init()
 display = pygame.display.set_mode((0,0),pygame.FULLSCREEN)
 pygame.display.set_caption("Car Game")
@@ -80,8 +96,12 @@ car_y_pos = height - (carHeight + 25)
 appear = 0
 appearAfter = 500
 obstacles = []
+rainbowText = (255,0,0)
 
-font1 = pygame.font.SysFont('verdana',27)
+font1 = pygame.font.SysFont('verdana',60)
+font2 = pygame.font.SysFont('verdana',48)
+font3 = pygame.font.SysFont('verdana',35)
+font4 = pygame.font.SysFont('verdana',27)
 
 running = True
 moveRight = False
@@ -132,64 +152,79 @@ while running:
     mousePos = pygame.mouse.get_pos()
     display.fill((255,255,255))
 
-    ################################ top items ################################
+    if collided:
+        rainbowText = goRainbow(rainbowText)
+        display.blit(font1.render("Welcome to Car Game",False,rainbowText),(50,80))
+        display.blit(font2.render("Score:"+str(score),False,(20,20,20)),(280,180))
 
-    if button(display,mousePos,(65,150,240),(95,170,255),(6,140,225),15,15,40,90,2,font1,"Quit",(20,20,20),31,16):
-        running = False
+        if button(display,mousePos,(65,150,240),(95,170,255),(6,140,225),200,300,75,180,4,font3,"Play",(20,20,20),253,313):
+            collided = False
+            score = 0
+            print("h")
 
-    display.blit(font1.render("SCORE: "+str(score),False,(20,20,20)),(120,15))
-
-    ################################ moving the car ################################
-
-    if moveLeft:
-        if car_x_pos > 15:
-            car_x_pos -= 2
-        else:
-            moveLeft = False
-
-    if moveRight:
-        if car_x_pos < width - 15 - carWidth:
-            car_x_pos += 2
-        else:
-            moveRight = False
-
-    if moveUp:
-        if car_y_pos > 70:
-            car_y_pos -= 1
-        else:
-            moveUp = False
-
-    if moveDown:
-        if car_y_pos < height - 15 - carHeight:
-            car_y_pos += 1
-        else:
-            moveDown = False
-
-    ################################ making objects appear ################################
-
-    if appear == appearAfter:
-        obstacles.append(Obstacle(display,randint(15,width-15)))
-        appear = 0
-
-    else:
-        appear += 1
-
-    delete = []
-    for obstacle in obstacles:
-        obstacle.render()
-        obstacle.moveDown()
-        if obstacle.hasCollided(car_x_pos,car_y_pos,carWidth,carHeight):
-            collided = True
+        if button(display,mousePos,(65,150,240),(95,170,255),(6,140,225),400,300,75,180,4,font3,"Quit",(20,20,20),450,313):
             running = False
-        if obstacle.needToDelete():
-            delete.append(obstacle)
-            score += 1
+            print("j")
 
-    for toDelete in delete:
-        obstacles.remove(toDelete)
+    if not collided:
+        ################################ top items ################################
+
+        if button(display,mousePos,(65,150,240),(95,170,255),(6,140,225),15,15,40,90,2,font4,"Quit",(20,20,20),31,16):
+            running = False
+            print("n")
+
+        display.blit(font4.render("SCORE: "+str(score),False,(20,20,20)),(120,15))
+
+        ################################ moving the car ################################
+
+        if moveLeft:
+            if car_x_pos > 15:
+                car_x_pos -= 2
+            else:
+                moveLeft = False
+
+        if moveRight:
+            if car_x_pos < width - 15 - carWidth:
+                car_x_pos += 2
+            else:
+                moveRight = False
+
+        if moveUp:
+            if car_y_pos > 70:
+                car_y_pos -= 1
+            else:
+                moveUp = False
+
+        if moveDown:
+            if car_y_pos < height - 15 - carHeight:
+                car_y_pos += 1
+            else:
+                moveDown = False
+
+        ################################ making objects appear ################################
+
+        if appear == appearAfter:
+            obstacles.append(Obstacle(display,randint(15,width-15)))
+            appear = 0
+
+        else:
+            appear += 1
+
+        delete = []
+        for obstacle in obstacles:
+            obstacle.render()
+            obstacle.moveDown()
+            if obstacle.hasCollided(car_x_pos,car_y_pos,carWidth,carHeight):
+                collided = True
+            if obstacle.needToDelete():
+                delete.append(obstacle)
+                score += 1
+
+        for toDelete in delete:
+            obstacles.remove(toDelete)
         
-
-    display.blit(car,(car_x_pos,car_y_pos))
+        display.blit(car,(car_x_pos,car_y_pos))
+        print("g")
 
     pygame.display.flip()
 
